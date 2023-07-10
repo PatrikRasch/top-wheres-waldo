@@ -1,6 +1,4 @@
-// import { useEffect, useState } from "react";
 // import { Auth } from "./components/auth";
-// import { db, auth, storage } from "./firebase.config";
 // import { getDocs, collection, addDoc, deleteDoc, updateDoc, doc } from "firebase/firestore"; // Gets the documents from the follections in Firestore Database
 // import { ref, uploadBytes } from "firebase/storage";
 // import "./assets/main.css";
@@ -9,24 +7,56 @@ import React, { useState, useRef, CSSProperties } from "react";
 
 import cartoonNetwork from "./images/cartoon-network1.jpg";
 
+// Component imports
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import DropdownMenu from "./components/content/DropdownMenu";
+import Scoreboard from "./components/Scoreboard";
+import Gameover from "./components/Gameover";
+
+// Interface imports
+import { TimeProp } from "./interfaces";
+import { ScoreboardProp } from "./interfaces";
+import { ShowScoreboardProp } from "./interfaces";
+import { ShowGameoverProp } from "./interfaces";
+import { GameStartedProp } from "./interfaces";
+import { InitialGameStartedProp } from "./interfaces";
 
 function App() {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showDropdownLeft, setShowDropdownLeft] = useState(false);
   const [xCoord, setXCoord] = useState(Number);
   const [yCoord, setYCoord] = useState(Number);
   const [xCoordTarget, setXCoordTarget] = useState(Number);
   const [yCoordTarget, setYCoordTarget] = useState(Number);
+  const [showGameover, setShowGameover] = useState(false);
+  const [nameToBeSubmitted, setNameToBeSubmitted] = useState("");
+  const [time, setTime] = useState(0);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [initialGameStarted, setInitialGameStarted] = useState(false);
+
+  // Decides if scoreboard visible on screen.
+  const [showScoreboard, setShowScoreboard] = useState(false);
+  // Sets found to true when character is found
+  const [characterList, setCharacterList] = useState<
+    { id: string; title: string; found: boolean }[]
+  >([]);
+  // Scoreboard for all the players
+  const [scoreboard, setScoreboard] = useState<{ id: string; name: string; time: number }[]>([]);
+
+  const dropdownMenuRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
 
   const closeDropdown = () => {
     setShowDropdown(false);
   };
 
+  const coordinates = {
+    xCoordTarget: xCoordTarget,
+    yCoordTarget: yCoordTarget,
+  };
+
   const imageClicked = (e: React.MouseEvent) => {
-    // if (showDropdown) setShowDropdown(false);
     if (!showDropdown) setShowDropdown(true);
     if (imageRef.current) {
       setXCoord(e.clientX);
@@ -37,82 +67,149 @@ function App() {
 
       const clickX = e.clientX - imageX; // Left of image is now 0
       const clickY = e.clientY - imageY; // Top of images is now 0
-      console.log("click X: ", clickX);
-      console.log("click Y: ", clickY);
       setXCoordTarget(clickX);
       setYCoordTarget(clickY);
     }
   };
 
-  interface Target {
-    xMax: number;
-    xMin: number;
-    yMin: number;
-    yMax: number;
-  }
-
-  const targetFound = (target: Target, title: string) => {
-    if (
-      xCoordTarget < target.xMax &&
-      xCoordTarget > target.xMin &&
-      yCoordTarget < target.yMax &&
-      yCoordTarget > target.yMin
-    )
-      alert(title + " found");
-  };
-
-  const johnnyBravoCoords = {
-    xMin: "318",
-    xMax: "645",
-    yMax: "504",
-    yMin: "216",
-  };
-  const scoobyDooCoords = {
-    xMin: 1618,
-    xMax: 1784,
-    yMax: 600,
-    yMin: 303,
-  };
-  const plankCoords = {
-    xMin: "0",
-    xMax: "79",
-    yMax: "190",
-    yMin: "81",
+  const dropdownLeft = (e: any) => {
+    if (e.clientX > window.innerWidth * 0.8) {
+      setShowDropdownLeft(true);
+    } else setShowDropdownLeft(false);
   };
 
   const dropdownMenuStyle: CSSProperties = {
     left: xCoord,
     top: yCoord,
   };
+  const dropdownMenuStyleLeft: CSSProperties = {
+    left: xCoord - (dropdownMenuRef.current?.clientWidth || 0),
+    top: yCoord,
+  };
+
+  //   const getMovieList = async () => {
+  //     // READ THE DATA FROM OUR DB
+  //     try {
+  //       const data = await getDocs(movieCollectionRef);
+  //       const filteredData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+  //       setMovieList(filteredData);
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //     // SET THE MOVIE LIST TO BE EQUAL TO OUR DATA
+  //   };
+
+  //   useEffect(() => {
+  //     alert("loop?");
+  //     getMovieList();
+  //   }, []);
+
+  const handleInitialGameStarted = () => {
+    if (initialGameStarted) {
+      return <></>;
+    } else {
+      return (
+        <div className="grid justify-center gap-2">
+          <div className="h-8 text-lg">Click to see the characters you are to find</div>
+          <button
+            className="h-[75px] w-[200px] justify-self-center rounded-lg bg-red-600 text-2xl text-white hover:opacity-80"
+            onClick={() => {
+              setGameStarted(true);
+              setInitialGameStarted(true);
+            }}
+          >
+            Start Game
+          </button>
+        </div>
+      );
+    }
+  };
 
   return (
     <div className="grid h-screen grid-rows-[auto,1fr,auto]">
-      <div className="h-48 ">
-        <Header />
+      <div className="sm:h-[15vh]">
+        <Header
+          gameStarted={gameStarted}
+          setGameStarted={setGameStarted}
+          time={time}
+          setTime={setTime}
+        />
       </div>
-      <div className="grid h-full items-center justify-center overflow-x-auto">
+      {/* {handleInitialGameStarted()} */}
+      <div
+        className={` ${showScoreboard || showGameover ? "pointer-events-none " : ""}
+        } grid h-[75vh] items-center overflow-x-scroll`}
+      >
         <img
           ref={imageRef} // useRef for the image
           src={cartoonNetwork}
           alt=""
-          className="h-full min-w-max cursor-pointer overflow-scroll object-contain"
+          className="h-full w-max cursor-pointer justify-self-center"
           onClick={(e) => {
             imageClicked(e);
-            targetFound(scoobyDooCoords, "Scooby-Doo");
+            dropdownLeft(e);
           }}
         />
       </div>
-
-      <div
-        style={dropdownMenuStyle}
-        className={`absolute ${showDropdown ? "opacity-100" : "pointer-events-none opacity-0"}`}
-      >
-        <DropdownMenu closeDropdown={closeDropdown} />
-      </div>
-
-      <div className="screen-w grid h-36 items-center justify-center bg-white">
+      <div className="screen-w grid items-center justify-center bg-white  sm:h-[10vh]">
         <Footer />
       </div>
+      <div
+        style={showDropdownLeft ? dropdownMenuStyleLeft : dropdownMenuStyle}
+        className={`${showDropdown ? "opacity-100" : "pointer-events-none opacity-0"} absolute`}
+      >
+        <div ref={dropdownMenuRef}>
+          <DropdownMenu
+            closeDropdown={closeDropdown}
+            coordinates={coordinates}
+            showGameover={showGameover}
+            setShowGameover={setShowGameover}
+            showScoreboard={showScoreboard}
+            setShowScoreboard={setShowScoreboard}
+            characterList={characterList}
+            setCharacterList={setCharacterList}
+            gameStarted={gameStarted}
+            setGameStarted={setGameStarted}
+          />
+        </div>
+      </div>
+      <div
+        className={` ${
+          showGameover ? "" : "pointer-events-none opacity-0"
+        } absolute left-[50%] top-[50%] z-10 translate-x-[-50%] translate-y-[-50%]`}
+      >
+        <Gameover
+          showGameover={showGameover}
+          setShowGameover={setShowGameover}
+          showScoreboard={showScoreboard}
+          setShowScoreboard={setShowScoreboard}
+          characterList={characterList}
+          setCharacterList={setCharacterList}
+          scoreboard={scoreboard}
+          setScoreboard={setScoreboard}
+          time={time}
+          setTime={setTime}
+        />
+      </div>
+      <div
+        className={` ${
+          showScoreboard ? "" : "pointer-events-none opacity-0"
+        } absolute left-[50%] top-[50%] z-10 translate-x-[-50%] translate-y-[-50%]`}
+      >
+        <Scoreboard
+          showGameover={showGameover}
+          setShowGameover={setShowGameover}
+          showScoreboard={showScoreboard}
+          setShowScoreboard={setShowScoreboard}
+          scoreboard={scoreboard}
+          setScoreboard={setScoreboard}
+        />
+      </div>
+      <div
+        className={`${
+          showScoreboard || showGameover ? "opacity-25" : "pointer-events-none opacity-0"
+        } absolute z-0 h-screen w-screen bg-black`}
+      ></div>
     </div>
   );
 }

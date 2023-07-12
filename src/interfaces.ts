@@ -50,3 +50,21 @@ export interface InitialGameStartedProp {
   initialGameStarted: boolean;
   setInitialGameStarted: (value: boolean) => void;
 }
+
+export interface ShowPlayAgainProp {
+  showPlayAgain: boolean;
+  setShowPlayAgain: (value: boolean) => void;
+}
+
+export interface JohnnyBravoFoundProp {
+  johnnyBravoFound: boolean;
+  setJohnnyBravoFound: (value: boolean) => void;
+}
+export interface ScoobyDooFoundProp {
+  scoobyDooFound: boolean;
+  setScoobyDooFound: (value: boolean) => void;
+}
+export interface PlankFoundProp {
+  plankFound: boolean;
+  setPlankFound: (value: boolean) => void;
+}

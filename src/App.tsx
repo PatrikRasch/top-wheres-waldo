@@ -6,10 +6,12 @@
 import React, { useState, useRef, CSSProperties } from "react";
 
 import cartoonNetwork from "./images/cartoon-network1.jpg";
+import targetJohnnyBravo from "./images/cartoon-network-characters/johnny-bravo1.png";
+import targetScoobyDoo from "./images/cartoon-network-characters/scooby-doo1.png";
+import targetPlank from "./images/cartoon-network-characters/plank1.png";
 
 // Component imports
 import Header from "./components/header/Header";
-import Footer from "./components/footer/Footer";
 import DropdownMenu from "./components/content/DropdownMenu";
 import Scoreboard from "./components/Scoreboard";
 import Gameover from "./components/Gameover";
@@ -21,6 +23,11 @@ import { ShowScoreboardProp } from "./interfaces";
 import { ShowGameoverProp } from "./interfaces";
 import { GameStartedProp } from "./interfaces";
 import { InitialGameStartedProp } from "./interfaces";
+import { JohnnyBravoFoundProp } from "./interfaces";
+import { ScoobyDooFoundProp } from "./interfaces";
+import { PlankFoundProp } from "./interfaces";
+
+//3 Need a way to check if Firebase is being read to avoid overrunning daily usage limit
 
 function App() {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -34,6 +41,10 @@ function App() {
   const [time, setTime] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
   const [initialGameStarted, setInitialGameStarted] = useState(false);
+  const [showPlayAgain, setShowPlayAgain] = useState(false);
+  const [johnnyBravoFound, setJohnnyBravoFound] = useState(false);
+  const [scoobyDooFound, setScoobyDooFound] = useState(false);
+  const [plankFound, setPlankFound] = useState(false);
 
   // Decides if scoreboard visible on screen.
   const [showScoreboard, setShowScoreboard] = useState(false);
@@ -104,15 +115,147 @@ function App() {
   //     getMovieList();
   //   }, []);
 
+  const handleShowGameover = () => {
+    if (showGameover)
+      return (
+        <div>
+          <div
+            className={` ${
+              showGameover ? "" : "pointer-events-none opacity-0"
+            } absolute left-[50%] top-[50%] z-10 translate-x-[-50%] translate-y-[-50%]`}
+          >
+            <Gameover
+              showGameover={showGameover}
+              setShowGameover={setShowGameover}
+              showScoreboard={showScoreboard}
+              setShowScoreboard={setShowScoreboard}
+              characterList={characterList}
+              setCharacterList={setCharacterList}
+              scoreboard={scoreboard}
+              setScoreboard={setScoreboard}
+              time={time}
+              setTime={setTime}
+              showPlayAgain={showPlayAgain}
+              setShowPlayAgain={setShowPlayAgain}
+            />
+          </div>
+        </div>
+      );
+  };
+
+  const handleShowScoreboard = () => {
+    if (showScoreboard) {
+      return (
+        <div
+          className={` ${
+            showScoreboard ? "" : "pointer-events-none opacity-0"
+          } absolute left-[50%] top-[50%] z-10 translate-x-[-50%] translate-y-[-50%]`}
+        >
+          <Scoreboard
+            showGameover={showGameover}
+            setShowGameover={setShowGameover}
+            showScoreboard={showScoreboard}
+            setShowScoreboard={setShowScoreboard}
+            scoreboard={scoreboard}
+            setScoreboard={setScoreboard}
+            showPlayAgain={showPlayAgain}
+            setShowPlayAgain={setShowPlayAgain}
+            time={time}
+            setTime={setTime}
+            characterList={characterList}
+            setCharacterList={setCharacterList}
+            gameStarted={gameStarted}
+            setGameStarted={setGameStarted}
+            johnnyBravoFound={johnnyBravoFound}
+            setJohnnyBravoFound={setJohnnyBravoFound}
+            scoobyDooFound={scoobyDooFound}
+            setScoobyDooFound={setScoobyDooFound}
+            plankFound={plankFound}
+            setPlankFound={setPlankFound}
+          />
+        </div>
+      );
+    }
+  };
+
   const handleInitialGameStarted = () => {
     if (initialGameStarted) {
-      return <></>;
+      return (
+        <div className="grid h-screen grid-rows-[auto,1fr]">
+          <div className="sm:h-[15vh]">
+            <Header
+              gameStarted={gameStarted}
+              setGameStarted={setGameStarted}
+              time={time}
+              setTime={setTime}
+              showScoreboard={showScoreboard}
+              setShowScoreboard={setShowScoreboard}
+            />
+          </div>
+          <div
+            className={` ${showScoreboard || showGameover ? "pointer-events-none " : ""}
+        } grid h-[85vh] items-start overflow-x-scroll`}
+          >
+            <img
+              ref={imageRef} // useRef for the image
+              src={cartoonNetwork}
+              alt=""
+              className="h-full max-h-[85vh] w-max cursor-pointer justify-self-center xl:h-min xl:w-[100vw]"
+              onClick={(e) => {
+                imageClicked(e);
+                dropdownLeft(e);
+              }}
+            />
+          </div>
+          <div
+            style={showDropdownLeft ? dropdownMenuStyleLeft : dropdownMenuStyle}
+            className={`${showDropdown ? "opacity-100" : "pointer-events-none opacity-0"} absolute`}
+          >
+            <div ref={dropdownMenuRef}>
+              <DropdownMenu
+                closeDropdown={closeDropdown}
+                coordinates={coordinates}
+                showGameover={showGameover}
+                setShowGameover={setShowGameover}
+                showScoreboard={showScoreboard}
+                setShowScoreboard={setShowScoreboard}
+                characterList={characterList}
+                setCharacterList={setCharacterList}
+                gameStarted={gameStarted}
+                setGameStarted={setGameStarted}
+                johnnyBravoFound={johnnyBravoFound}
+                setJohnnyBravoFound={setJohnnyBravoFound}
+                scoobyDooFound={scoobyDooFound}
+                setScoobyDooFound={setScoobyDooFound}
+                plankFound={plankFound}
+                setPlankFound={setPlankFound}
+              />
+            </div>
+          </div>
+          {handleShowGameover()}
+          {handleShowScoreboard()}
+          <div
+            className={`${
+              showScoreboard || showGameover ? "opacity-25" : "pointer-events-none opacity-0"
+            } absolute z-0 h-screen w-screen bg-black`}
+          ></div>
+        </div>
+      );
     } else {
       return (
-        <div className="grid justify-center gap-2">
-          <div className="h-8 text-lg">Click to see the characters you are to find</div>
+        <div className="absolute left-[50%] top-[50%] flex translate-x-[-50%] translate-y-[-50%] flex-col items-center justify-center gap-4 rounded-xl bg-gray-200 p-12 text-2xl shadow-2xl">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-8">You are to find these three characters</div>
+            <div className="grid grid-cols-3 justify-items-center overflow-hidden">
+              <img src={targetJohnnyBravo} alt="" className="h-40 p-3 transition hover:scale-105" />
+              <img src={targetScoobyDoo} alt="" className="h-40 p-3 transition hover:scale-105" />
+              <img src={targetPlank} alt="" className="h-40 p-3 transition hover:scale-105" />
+            </div>
+          </div>
+          <div className="">When you click start, a timer will start.</div>
+          <div className="">Find them as fast as you can!</div>
           <button
-            className="h-[75px] w-[200px] justify-self-center rounded-lg bg-red-600 text-2xl text-white hover:opacity-80"
+            className="h-[75px] w-[200px] justify-self-center rounded-lg bg-black text-2xl text-white hover:opacity-80"
             onClick={() => {
               setGameStarted(true);
               setInitialGameStarted(true);
@@ -125,93 +268,7 @@ function App() {
     }
   };
 
-  return (
-    <div className="grid h-screen grid-rows-[auto,1fr,auto]">
-      <div className="sm:h-[15vh]">
-        <Header
-          gameStarted={gameStarted}
-          setGameStarted={setGameStarted}
-          time={time}
-          setTime={setTime}
-        />
-      </div>
-      {/* {handleInitialGameStarted()} */}
-      <div
-        className={` ${showScoreboard || showGameover ? "pointer-events-none " : ""}
-        } grid h-[75vh] items-center overflow-x-scroll`}
-      >
-        <img
-          ref={imageRef} // useRef for the image
-          src={cartoonNetwork}
-          alt=""
-          className="h-full w-max cursor-pointer justify-self-center"
-          onClick={(e) => {
-            imageClicked(e);
-            dropdownLeft(e);
-          }}
-        />
-      </div>
-      <div className="screen-w grid items-center justify-center bg-white  sm:h-[10vh]">
-        <Footer />
-      </div>
-      <div
-        style={showDropdownLeft ? dropdownMenuStyleLeft : dropdownMenuStyle}
-        className={`${showDropdown ? "opacity-100" : "pointer-events-none opacity-0"} absolute`}
-      >
-        <div ref={dropdownMenuRef}>
-          <DropdownMenu
-            closeDropdown={closeDropdown}
-            coordinates={coordinates}
-            showGameover={showGameover}
-            setShowGameover={setShowGameover}
-            showScoreboard={showScoreboard}
-            setShowScoreboard={setShowScoreboard}
-            characterList={characterList}
-            setCharacterList={setCharacterList}
-            gameStarted={gameStarted}
-            setGameStarted={setGameStarted}
-          />
-        </div>
-      </div>
-      <div
-        className={` ${
-          showGameover ? "" : "pointer-events-none opacity-0"
-        } absolute left-[50%] top-[50%] z-10 translate-x-[-50%] translate-y-[-50%]`}
-      >
-        <Gameover
-          showGameover={showGameover}
-          setShowGameover={setShowGameover}
-          showScoreboard={showScoreboard}
-          setShowScoreboard={setShowScoreboard}
-          characterList={characterList}
-          setCharacterList={setCharacterList}
-          scoreboard={scoreboard}
-          setScoreboard={setScoreboard}
-          time={time}
-          setTime={setTime}
-        />
-      </div>
-      <div
-        className={` ${
-          showScoreboard ? "" : "pointer-events-none opacity-0"
-        } absolute left-[50%] top-[50%] z-10 translate-x-[-50%] translate-y-[-50%]`}
-      >
-        <Scoreboard
-          showGameover={showGameover}
-          setShowGameover={setShowGameover}
-          showScoreboard={showScoreboard}
-          setShowScoreboard={setShowScoreboard}
-          scoreboard={scoreboard}
-          setScoreboard={setScoreboard}
-        />
-      </div>
-      <div
-        className={`${
-          showScoreboard || showGameover ? "opacity-25" : "pointer-events-none opacity-0"
-        } absolute z-0 h-screen w-screen bg-black`}
-      ></div>
-    </div>
-  );
+  return <div>{handleInitialGameStarted()}</div>;
 }
 export default App;
 

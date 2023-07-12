@@ -1,13 +1,17 @@
-import React from "react";
+// import React from "react";
 
-const Footer = () => {
-  return (
-    <div className="">
-      <button className="w-fit rounded-md bg-gray-400 p-6 text-xl hover:bg-red-500">
-        Scoreboard
-      </button>
-    </div>
-  );
-};
+// import { ShowScoreboardProp } from "../../interfaces";
 
-export default Footer;
+// interface Props {
+//   showScoreboard: ShowScoreboardProp["showScoreboard"];
+//   setShowScoreboard: ShowScoreboardProp["setShowScoreboard"];
+// }
+
+// const Footer = (props: Props) => {
+//   const { showScoreboard, setShowScoreboard } = props;
+//   return (
+
+//   );
+// };
+
+// export default Footer;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { TimeProp } from "../../interfaces";
 import { GameStartedProp } from "../../interfaces";
 

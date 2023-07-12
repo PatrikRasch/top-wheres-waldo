@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getDocs, collection, addDoc, deleteDoc, updateDoc, doc } from "firebase/firestore";
+import { getDocs, collection } from "firebase/firestore";
 import { db } from "./../../config/firebase.config";
 import targetJohnnyBravo from "./../../images/cartoon-network-characters/johnny-bravo1.png";
 import targetScoobyDoo from "./../../images/cartoon-network-characters/scooby-doo1.png";
@@ -11,6 +11,9 @@ import { GameStartedProp } from "../../interfaces";
 import { CharacterListProp } from "../../interfaces";
 import { Target } from "../../interfaces";
 import { Coordinates } from "../../interfaces";
+import { JohnnyBravoFoundProp } from "../../interfaces";
+import { ScoobyDooFoundProp } from "../../interfaces";
+import { PlankFoundProp } from "../../interfaces";
 
 interface Props {
   closeDropdown: () => void;
@@ -23,22 +26,32 @@ interface Props {
   setGameStarted: GameStartedProp["setGameStarted"];
   characterList: CharacterListProp["characterList"];
   setCharacterList: CharacterListProp["setCharacterList"];
+  johnnyBravoFound: JohnnyBravoFoundProp["johnnyBravoFound"];
+  setJohnnyBravoFound: JohnnyBravoFoundProp["setJohnnyBravoFound"];
+  scoobyDooFound: ScoobyDooFoundProp["scoobyDooFound"];
+  setScoobyDooFound: ScoobyDooFoundProp["setScoobyDooFound"];
+  plankFound: PlankFoundProp["plankFound"];
+  setPlankFound: PlankFoundProp["setPlankFound"];
 }
 
 const DropdownMenu = (props: Props) => {
   const [wrongSelection, setWrongSelection] = useState(false);
-  const [johnnyBravoFound, setJohnnyBravoFound] = useState(false);
-  const [scoobyDooFound, setScoobyDooFound] = useState(false);
-  const [plankFound, setPlankFound] = useState(false);
+
   const { showScoreboard, setShowScoreboard } = props;
   const { showGameover, setShowGameover } = props;
   const { gameStarted, setGameStarted } = props;
   const { characterList, setCharacterList } = props;
+  const { johnnyBravoFound, setJohnnyBravoFound } = props;
+  const { scoobyDooFound, setScoobyDooFound } = props;
+  const { plankFound, setPlankFound } = props;
 
   const charactersCollectionRef = collection(db, "characters");
 
+  //2 We get infinite calls to the backend when the scoreboard is showing
+
   const getCharacterList = async () => {
     try {
+      console.log("Before getCharacterList read. In DropdownMenu");
       const data = await getDocs(charactersCollectionRef);
       const filteredData = data.docs.map((doc) => ({
         id: doc.id,
@@ -53,8 +66,11 @@ const DropdownMenu = (props: Props) => {
 
   const scoresCollection = collection(db, "scores");
 
+  //2 We get infinite calls to the backend when the scoreboard is showing
+
   const getScores = async () => {
     try {
+      console.log("Before getScores read. In DropdownMenu");
       const data = await getDocs(scoresCollection);
       const filteredData = data.docs.map((doc) => ({
         name: doc.data().name,

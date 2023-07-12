@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { getDocs, collection, addDoc, deleteDoc, updateDoc, doc } from "firebase/firestore";
+import React, { useState, useEffect } from "react";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "./../config/firebase.config";
 import { v4 as uuidv4 } from "uuid";
 
@@ -8,6 +8,7 @@ import { ScoreboardProp } from "../interfaces";
 import { ShowScoreboardProp } from "../interfaces";
 import { ShowGameoverProp } from "../interfaces";
 import { CharacterListProp } from "../interfaces";
+import { ShowPlayAgainProp } from "../interfaces";
 
 interface Props {
   showGameover: ShowGameoverProp["showGameover"];
@@ -20,36 +21,66 @@ interface Props {
   setScoreboard: ScoreboardProp["setScoreboard"];
   showScoreboard: ShowScoreboardProp["showScoreboard"];
   setShowScoreboard: ShowScoreboardProp["setShowScoreboard"];
+  showPlayAgain: ShowPlayAgainProp["showPlayAgain"];
+  setShowPlayAgain: ShowPlayAgainProp["setShowPlayAgain"];
 }
 
 const Gameover = (props: Props) => {
   const [nameToSubmit, setNameToSubmit] = useState("");
-  const scoresCollectionRef = collection(db, "scores");
   const { time, setTime } = props;
   const { scoreboard, setScoreboard } = props;
   const { showScoreboard, setShowScoreboard } = props;
   const { showGameover, setShowGameover } = props;
   const { characterList, setCharacterList } = props;
+  const { showPlayAgain, setShowPlayAgain } = props;
 
-  const onSubmitScore = async (newName: string, newTime: number) => {
+  const scoresCollection = collection(db, "scores");
+
+  const onSubmitScoreBackend = async (newName: string, newTime: number) => {
     try {
-      await addDoc(scoresCollectionRef, {
+      console.log("Before onSubmitScoreBackend. In Gameover");
+      await addDoc(scoresCollection, {
         name: newName,
         time: newTime,
       });
-      setScoreboard([...scoreboard, { id: uuidv4(), name: newName, time: newTime }]);
-      sortScores();
+      console.log("After onSubmitScoreBackend. In Gameover");
     } catch (err) {
       console.error(err);
     }
   };
 
-  const sortScores = () => {
-    const scoreboardCopy = [...scoreboard];
-    scoreboardCopy.sort((a, b) => {
+  const onSubmitScoreFrontend = (newName: string, newTime: number) => {
+    const newScore = { id: uuidv4(), name: newName, time: newTime };
+    setScoreboard([...scoreboard, newScore]);
+    const sortedScoreboard = [...scoreboard];
+    sortedScoreboard.sort((a, b) => {
       return a.time - b.time;
     });
-    setScoreboard(scoreboardCopy);
+    setScoreboard(sortedScoreboard);
+  };
+
+  const getScores = async () => {
+    try {
+      console.log("Before getScores read. In Scoreboard");
+      const data = await getDocs(scoresCollection);
+      const filteredData = data.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+        time: doc.data().time,
+      }));
+      filteredData.sort((a, b) => {
+        return a.time - b.time;
+      });
+      setScoreboard(filteredData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleOnSubmitScore = async (newName: string, newTime: number) => {
+    onSubmitScoreBackend(newName, newTime);
+    onSubmitScoreFrontend(newName, newTime);
+    getScores();
   };
 
   return (
@@ -72,13 +103,14 @@ const Gameover = (props: Props) => {
         </div>
       </div>
       <button
+        disabled={nameToSubmit.length === 0}
         className="h-[75px] w-[50%] justify-self-center rounded-lg bg-black text-2xl text-white hover:opacity-80"
         onClick={() => {
-          if (nameToSubmit.length === 0) return;
-          onSubmitScore(nameToSubmit, time);
+          handleOnSubmitScore(nameToSubmit, time);
           setShowScoreboard(true);
           setShowGameover(false);
           setNameToSubmit("");
+          setShowPlayAgain(true);
         }}
       >
         Submit score

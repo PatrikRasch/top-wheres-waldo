@@ -10,32 +10,22 @@
 
 ## Purpose of the Project
 
-Practice project to further skills in React, TypeScript and Tailwind.
-Little deeper dive
-What the project does?
-What words are people searching for? Find what solves their problem
-
-- Hello
+Practice project to further development skills in React, TypeScript and Tailwind.
+The project is meant to challenge the user to find the characters as fast possible by clicking on them and selecting them. Similar to a classic game of "Where's Waldo?".
 
 ## Game Features
 
-Real-time character verification
-Real-time game over verification
-Secure game updates using Firebase cloud functions
-Global leaderboard without login
+- Real-time character verification
+- Real-time game over verification
+- Secure game updates using Firebase cloud functions
+- Global leaderboard without login
 
 ## Technologies
 
-TypeScript
-React
-Firestore
-Tailwind CSS
-
-5. User Instructions
-   Instructions for people who aren't even coders
-   Installation stuff
-
-6. Developer Instructions
+- TypeScript
+- React
+- Firestore
+- Tailwind CSS
 
 ## Known issues
 

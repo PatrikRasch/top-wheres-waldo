@@ -19,7 +19,7 @@ const Header = (props: Props) => {
   const { gameStarted, setGameStarted } = props;
   const { showScoreboard, setShowScoreboard } = props;
   return (
-    <div className="grid w-screen grid-cols-3 items-center bg-white">
+    <div className="grid min-h-[200px] w-screen grid-cols-3 items-center bg-white">
       <button
         className="w-[200px] justify-self-center rounded-md bg-black p-6 text-xl text-white hover:opacity-90"
         onClick={() => {

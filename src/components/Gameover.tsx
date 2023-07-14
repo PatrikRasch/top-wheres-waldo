@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, deleteDoc } from "firebase/firestore";
 import { db } from "./../config/firebase.config";
 import { v4 as uuidv4 } from "uuid";
 
@@ -43,7 +43,6 @@ const Gameover = (props: Props) => {
         name: newName,
         time: newTime,
       });
-      console.log("After onSubmitScoreBackend. In Gameover");
     } catch (err) {
       console.error(err);
     }
@@ -87,7 +86,7 @@ const Gameover = (props: Props) => {
     <div className="grid h-[500px] w-[650px] grid-rows-[5fr,3fr,5fr,5fr] items-center justify-center justify-items-center rounded-2xl bg-white p-12">
       <div className="flex flex-col items-center gap-3">
         <div className="text-5xl">YOU FOUND THEM ALL</div>
-        <div>(I know the game is short lmao whatever it's for practice)</div>
+        <div>(I know the game is short, it's just for practice 🥰)</div>
       </div>
       <div className="text-3xl">Your Time: {time} seconds</div>
       <div className="justify-center gap-4 text-3xl">
@@ -95,6 +94,8 @@ const Gameover = (props: Props) => {
         <div className="h-full w-full rounded-lg border-4 border-black">
           <input
             type="text"
+            maxLength={16}
+            placeholder="Your Name"
             className="h-[70px] w-full text-center focus:outline-none"
             onChange={(e) => {
               setNameToSubmit(e.target.value);

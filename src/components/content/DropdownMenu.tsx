@@ -66,8 +66,6 @@ const DropdownMenu = (props: Props) => {
 
   const scoresCollection = collection(db, "scores");
 
-  //2 We get infinite calls to the backend when the scoreboard is showing
-
   const getScores = async () => {
     try {
       console.log("Before getScores read. In DropdownMenu");
@@ -138,22 +136,22 @@ const DropdownMenu = (props: Props) => {
   };
 
   const johnnyBravoCoords = {
-    xMin: 318,
-    xMax: 645,
-    yMax: 504,
-    yMin: 216,
+    xMin: 288,
+    xMax: 578,
+    yMax: 461,
+    yMin: 195,
   };
   const scoobyDooCoords = {
-    xMin: 1618,
-    xMax: 1784,
-    yMax: 600,
-    yMin: 303,
+    xMin: 1456,
+    xMax: 1600,
+    yMax: 522,
+    yMin: 277,
   };
   const plankCoords = {
     xMin: 0,
-    xMax: 79,
-    yMax: 190,
-    yMin: 81,
+    xMax: 72,
+    yMax: 171,
+    yMin: 73,
   };
 
   return (
@@ -204,47 +202,3 @@ const DropdownMenu = (props: Props) => {
 };
 
 export default DropdownMenu;
-
-// const [updateId, setUpdateId] = useState(String);
-
-// const updateCharacterFoundBackend = async () => {
-//   console.log(characterList);
-//   characterList.forEach((element) => {
-//     if (element.found === true) {
-//       const id = element.id;
-//       setUpdateId(id);
-//     }
-//   });
-//   if (updateId) {
-//     console.log(updateId);
-//     const characterDoc = doc(db, "characters", updateId);
-//     console.log(characterDoc);
-//     await updateDoc(characterDoc, { found: true });
-//     //6 lots of problems here xD
-//   }
-// };
-
-// try {
-//   const data = await getDocs(charactersCollectionRef);
-//   // Take data and its docs. Map the data from each doc
-//   const filteredData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-//   const lol = doc(db, "characters");
-//   console.log(lol);
-//   // const characterDoc = doc(db, "characters");
-// } catch (err) {
-//   console.error(err);
-// }
-
-//   const updateMovieTitle = async (id) => {
-//     const movieDoc = doc(db, "movies", id);
-//     await updateDoc(movieDoc, { title: updatedTitle });
-//   };
-
-// const updateCharacterFound = async (characterNum: number) => {
-// const characterDoc = doc(db, "characters", characterNum);
-// await updateDoc(characterDoc, { johnnyBravo: true });
-// };
-
-// useEffect(() => {
-// alert("characterList updated! useEffect");
-// }, [characterList]);

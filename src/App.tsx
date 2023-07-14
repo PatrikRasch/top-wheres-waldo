@@ -26,6 +26,7 @@ import { InitialGameStartedProp } from "./interfaces";
 import { JohnnyBravoFoundProp } from "./interfaces";
 import { ScoobyDooFoundProp } from "./interfaces";
 import { PlankFoundProp } from "./interfaces";
+import { Target } from "./interfaces";
 
 //3 Need a way to check if Firebase is being read to avoid overrunning daily usage limit
 
@@ -73,13 +74,19 @@ function App() {
       setXCoord(e.clientX);
       setYCoord(e.clientY);
       const imageRect = imageRef.current.getBoundingClientRect(); // Grabs the bounds of the image
-      const imageX = imageRect.left; // Distance from left edge of viewport to left edge of rectangle
-      const imageY = imageRect.top; // Distance from top edge of viewport to top edge of rectangle
-
-      const clickX = e.clientX - imageX; // Left of image is now 0
-      const clickY = e.clientY - imageY; // Top of images is now 0
-      setXCoordTarget(clickX);
-      setYCoordTarget(clickY);
+      const leftViewportToImage = imageRect.left; // Distance from left edge of viewport to left edge of rectangle
+      const topViewportToImage = imageRect.top; // Distance from top edge of viewport to top edge of rectangle
+      const leftZero = e.clientX - leftViewportToImage; // Left of image is now 0
+      const topZero = e.clientY - topViewportToImage; // Top of images is now 0
+      const imageWidth = imageRect.width; // Non-natural width of image
+      const imageHeight = imageRect.height; // Non-natural height of image
+      // Ratios. Above 1 when image is sized above natural size
+      const ratioX = imageWidth / imageRef.current.naturalWidth; // X-ratio of image compared to natural width
+      const ratioY = imageHeight / imageRef.current.naturalHeight; // Y-ratio of image comapred to natural height
+      const adjustedX = Math.round(leftZero / ratioX);
+      const adjustedY = Math.round(topZero / ratioY);
+      setXCoordTarget(adjustedX);
+      setYCoordTarget(adjustedY);
     }
   };
 
@@ -97,23 +104,6 @@ function App() {
     left: xCoord - (dropdownMenuRef.current?.clientWidth || 0),
     top: yCoord,
   };
-
-  //   const getMovieList = async () => {
-  //     // READ THE DATA FROM OUR DB
-  //     try {
-  //       const data = await getDocs(movieCollectionRef);
-  //       const filteredData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-  //       setMovieList(filteredData);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //     // SET THE MOVIE LIST TO BE EQUAL TO OUR DATA
-  //   };
-
-  //   useEffect(() => {
-  //     alert("loop?");
-  //     getMovieList();
-  //   }, []);
 
   const handleShowGameover = () => {
     if (showGameover)
@@ -149,7 +139,7 @@ function App() {
         <div
           className={` ${
             showScoreboard ? "" : "pointer-events-none opacity-0"
-          } absolute left-[50%] top-[50%] z-10 translate-x-[-50%] translate-y-[-50%]`}
+          } absolute left-[50%] top-[50%] z-30 translate-x-[-50%] translate-y-[-50%]`}
         >
           <Scoreboard
             showGameover={showGameover}
@@ -178,11 +168,40 @@ function App() {
     }
   };
 
+  const handleShowPlayAgain = () => {
+    if (showPlayAgain) {
+      return (
+        <>
+          <div className="absolute left-0 top-0 h-full w-full bg-black opacity-50"></div>
+          <div
+            className={`absolute left-[50%] top-[50%] z-20 translate-x-[-50%] translate-y-[-50%]`}
+          >
+            <button
+              className="h-[75px] w-[200px] justify-self-center rounded-lg bg-white text-2xl text-black hover:bg-gray-100"
+              onClick={() => {
+                setShowPlayAgain(false);
+                const characterListCopy = [...characterList];
+                characterListCopy.forEach((item) => (item.found = false));
+                setCharacterList(characterListCopy);
+                setGameStarted(true);
+                setJohnnyBravoFound(false);
+                setScoobyDooFound(false);
+                setPlankFound(false);
+              }}
+            >
+              Play Again
+            </button>
+          </div>
+        </>
+      );
+    }
+  };
+
   const handleInitialGameStarted = () => {
     if (initialGameStarted) {
       return (
-        <div className="grid h-screen grid-rows-[auto,1fr]">
-          <div className="sm:h-[15vh]">
+        <div className="grid h-screen grid-rows-[auto,1fr] ">
+          <div className="min-h-[200px] sm:h-[15vh]">
             <Header
               gameStarted={gameStarted}
               setGameStarted={setGameStarted}
@@ -196,16 +215,19 @@ function App() {
             className={` ${showScoreboard || showGameover ? "pointer-events-none " : ""}
         } grid h-[85vh] items-start overflow-x-scroll`}
           >
-            <img
-              ref={imageRef} // useRef for the image
-              src={cartoonNetwork}
-              alt=""
-              className="h-full max-h-[85vh] w-max cursor-pointer justify-self-center xl:h-min xl:w-[100vw]"
-              onClick={(e) => {
-                imageClicked(e);
-                dropdownLeft(e);
-              }}
-            />
+            <div className="relative flex h-full max-h-[85vh] w-max cursor-pointer justify-center xl:h-min xl:w-[100vw]">
+              <img
+                ref={imageRef} // useRef for the image
+                src={cartoonNetwork}
+                alt=""
+                className="xl:w-{imageWidth} h-full max-h-min w-max cursor-pointer bg-red-200 object-contain"
+                onClick={(e) => {
+                  imageClicked(e);
+                  dropdownLeft(e);
+                }}
+              />
+              {handleShowPlayAgain()}
+            </div>
           </div>
           <div
             style={showDropdownLeft ? dropdownMenuStyleLeft : dropdownMenuStyle}
@@ -304,116 +326,3 @@ export default App;
 //5 - Scoreboard
 //6 -----------------------------------------------------------
 //6 -----------------------------------------------------------
-
-// import { useEffect, useState } from "react";
-// import { Auth } from "./components/auth";
-// import { db, auth, storage } from "./config/firebase";
-// import { getDocs, collection, addDoc, deleteDoc, updateDoc, doc } from "firebase/firestore"; // Gets the documents from the follections in Firestore Database
-// import { ref, uploadBytes } from "firebase/storage";
-
-// function App() {
-//   const [movieList, setMovieList] = useState([]);
-
-//   // New Movie States
-//   const [newMovieTitle, setNewMovieTitle] = useState("");
-//   const [newRelaseDate, setNewReleaseDate] = useState(0);
-//   const [isNewMovieOscar, setIsNewMovieOscar] = useState(false);
-
-//   // Update Title State
-//   const [updatedTitle, setUpdatedTitle] = useState("");
-
-//   // File Upload State
-//   const [fileUpload, setFileUpload] = useState(null);
-
-//   const movieCollectionRef = collection(db, "movies");
-
-//   const getMovieList = async () => {
-//     // READ THE DATA FROM OUR DB
-//     try {
-//       const data = await getDocs(movieCollectionRef);
-//       const filteredData = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-//       setMovieList(filteredData);
-//     } catch (err) {
-//       console.error(err);
-//     }
-//     // SET THE MOVIE LIST TO BE EQUAL TO OUR DATA
-//   };
-
-//   useEffect(() => {
-//     alert("loop?");
-//     getMovieList();
-//   }, []);
-
-//   // Submits new movie to the Firebase collection "Movies"
-//   // Submitted content must be in the form that is expected by the Firebase doc
-//   const onSubmitMovie = async () => {
-//     try {
-//       await addDoc(movieCollectionRef, {
-//         title: newMovieTitle,
-//         releaseDate: newRelaseDate,
-//         receivedAnOscar: isNewMovieOscar,
-//         userId: auth?.currentUser?.uid,
-//       });
-//       getMovieList();
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   };
-
-//   const deleteMovie = async (id) => {
-//     const movieDoc = doc(db, "movies", id);
-//     await deleteDoc(movieDoc);
-//   };
-
-//   const updateMovieTitle = async (id) => {
-//     const movieDoc = doc(db, "movies", id);
-//     await updateDoc(movieDoc, { title: updatedTitle });
-//   };
-
-//   const uploadFile = async () => {
-//     if (!fileUpload) return;
-//     const filesFolderRef = ref(storage, `projectFiles/${fileUpload.name}`);
-//     try {
-//       await uploadBytes(filesFolderRef, fileUpload);
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   };
-//   return (
-//     <div className="App">
-//       <Auth />
-
-//       <div>
-//         <input placeholder="Movie Title" onChange={(e) => setNewMovieTitle(e.target.value)} />
-//         <input
-//           placeholder="Release Date"
-//           type="number"
-//           onChange={(e) => setNewReleaseDate(Number(e.target.value))}
-//         />
-//         <input
-//           type="checkbox"
-//           checked={isNewMovieOscar}
-//           onChange={(e) => setIsNewMovieOscar(e.target.checked)}
-//         />
-//         <label>Received an oscar</label>
-//         <button onClick={onSubmitMovie}>Submit Movie</button>
-//       </div>
-
-//       <div>
-//         {movieList.map((movie) => (
-//           <div key={movie.id}>
-//             <h1 style={{ color: movie.receivedAnOscar ? "green" : "red" }}>{movie.title}</h1>
-//             <p>Date: {movie.releaseDate}</p>
-
-//             <button onClick={() => deleteMovie(movie.id)}>Delete Movie</button>
-//             <input placeholder="New title" onChange={(e) => setUpdatedTitle(e.target.value)} />
-//             <button onClick={() => updateMovieTitle(movie.id)}>Update title</button>
-//           </div>
-//         ))}
-//         <input type="file" onChange={(e) => setFileUpload(e.target.files[0])} />
-//         <button onClick={uploadFile}>Upload File</button>
-//       </div>
-//     </div>
-//   );
-// }
-// export default App;

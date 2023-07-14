@@ -81,7 +81,7 @@ const Scoreboard = (props: Props) => {
     return (
       <div className="grid max-h-[50vh] w-full overflow-y-scroll pt-4 text-6xl">
         {scoreboard.map((score) => (
-          <div className="grid grid-cols-[0.3fr,1fr,1fr] text-4xl" key={score.id}>
+          <div className="grid grid-cols-[0.3fr,1.3fr,0.6fr] text-4xl" key={score.id}>
             <div>{scoreboard.indexOf(score) + 1}.</div>
             <div>{score.name}</div>
             <div className="">{score.time}s</div>
@@ -94,7 +94,6 @@ const Scoreboard = (props: Props) => {
   const resetCharacterList = () => {
     const characterListCopy = [...characterList];
     characterListCopy.forEach((item) => (item.found = false));
-    console.log(characterList);
     setCharacterList(characterListCopy);
     setJohnnyBravoFound(false);
     setScoobyDooFound(false);
@@ -149,8 +148,8 @@ const Scoreboard = (props: Props) => {
 
   return (
     <div>
-      <div className="max-h-[75vh] w-[650px] rounded-2xl bg-white p-12">
-        <div className="grid grid-cols-[0.3fr,1fr,1fr] text-6xl">
+      <div className="grid max-h-[75vh] w-[650px] grid-rows-[75px,2fr] rounded-2xl bg-white p-12">
+        <div className="grid grid-cols-[0.3fr,1.3fr,0.6fr] text-6xl">
           <div>#</div>
           <div>Name</div>
           <div className="">Time</div>

@@ -15,9 +15,9 @@ const HeaderTargets = (props: Props) => {
 
   const renderGame = () => {
     return (
-      <div className="flex flex-col items-center p-1 text-2xl">
-        <div className="h-8">Find, click and select us</div>
-        <div className="grid grid-cols-3 justify-items-center overflow-hidden">
+      <div className="flex h-full min-h-[200px] flex-col items-center p-1 text-2xl">
+        <div className="">Find, click and select us</div>
+        <div className="grid grid-cols-3 justify-items-center">
           <img src={targetJohnnyBravo} alt="" className="h-40 p-3 " />
           <img src={targetScoobyDoo} alt="" className="h-40 p-3" />
           <img src={targetPlank} alt="" className="h-40 p-3" />
@@ -26,7 +26,7 @@ const HeaderTargets = (props: Props) => {
     );
   };
 
-  return <div className=" grid items-center sm:h-[15vh] xl:h-[15vh]">{renderGame()}</div>;
+  return <div className="sm:min-h-[200px] xl:min-h-[200px]">{renderGame()}</div>;
 };
 
 export default HeaderTargets;

@@ -6,7 +6,7 @@
 
 ## Demo
 
-![Image Alt Text](./src/assets/README-images/main-page.png)
+![Project demo image showing the main interface of the game. Header contains scoreboard button top left, characters to find in the middle (Johnny Bravo, Scooby Doo and Plank and a timer set to 0 seconds on the right. Beneath that is the image where the characters are to be found, taking up about 80% of the screen)](./src/assets/README-images/main-page.png)
 
 ## Purpose of the Project
 
@@ -35,6 +35,6 @@ Therefore, the end result is currently quite barebones and:
 - Not mobile friendly
 - Missing a more functional timer, currently only runs in pure seconds
 - Works, but doesn't scale well on wide and ultrawide monitors
-- Misses proper form validation for name input
+- Doesn't have proper form validation for name input
 - Has no censorship for names
-- Overall design is lacking
+- Has an overall lacking design

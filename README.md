@@ -4,6 +4,8 @@
 
 ## A fully functional app written in TypeScript using React and Tailwind
 
+Written in node v18.16.1
+
 ## Demo
 
 ![Project demo image showing the main interface of the game. Header contains scoreboard button top left, characters to find in the middle (Johnny Bravo, Scooby Doo and Plank and a timer set to 0 seconds on the right. Beneath that is the image where the characters are to be found, taking up about 80% of the screen)](./src/assets/README-images/main-page.png)

@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/top-wheres-waldo/static/css/main.38cc8181.css",
+    "main.js": "/top-wheres-waldo/static/js/main.1d1a81b5.js",
+    "static/media/scooby-doo1.png": "/top-wheres-waldo/static/media/scooby-doo1.8af4bcefa66640723cb8.png",
+    "static/media/cartoon-network1.jpg": "/top-wheres-waldo/static/media/cartoon-network1.c450acfe6dd9d02da875.jpg",
+    "static/media/plank1.png": "/top-wheres-waldo/static/media/plank1.320d1c59dedfbfe00170.png",
+    "static/media/johnny-bravo1.png": "/top-wheres-waldo/static/media/johnny-bravo1.ef13d63c5917e5c97a2c.png",
+    "index.html": "/top-wheres-waldo/index.html",
+    "main.38cc8181.css.map": "/top-wheres-waldo/static/css/main.38cc8181.css.map",
+    "main.1d1a81b5.js.map": "/top-wheres-waldo/static/js/main.1d1a81b5.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.38cc8181.css",
+    "static/js/main.1d1a81b5.js"
+  ]
+}

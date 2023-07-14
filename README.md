@@ -2,7 +2,7 @@
 
 [View the project live by clicking here](https://patrikrasch.github.io/top-wheres-waldo/)
 
-## A fully functional photo tagging app written in TypeScript using React and Tailwind
+## A fully functional app written in TypeScript using React and Tailwind
 
 ## Demo
 
